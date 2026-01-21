@@ -66,7 +66,6 @@ class VideoCompressionModel(nn.Module):
             version=clip_version,
             device=device,
             freeze=freeze_encoder,
-            output_tokens=True  # Get full token features
         )
         
         # Get feature dimension from encoder

@@ -8,3 +8,18 @@ docs/imgs/sky
 docs/imgs/uvg
 inversion.py
 lossbuilder.py
+
+# Training outputs
+logs/
+samples/
+checkpoints_train/
+*.pth
+!checkpoints/*.pth
+
+# Python
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
