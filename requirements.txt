@@ -1,0 +1,38 @@
+# Core Dependencies for Video Prediction Reconstruction Compression Training
+# Install with: pip install -r requirements.txt
+
+# PyTorch (install separately based on your CUDA version)
+# See https://pytorch.org/get-started/locally/
+# Example: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+
+# Core ML libraries
+torch>=2.0.0
+torchvision>=0.15.0
+torchmetrics>=1.0.0
+
+# Image processing
+opencv-python>=4.8.0
+kornia>=0.6.0
+Pillow>=10.0.0
+
+# Diffusion models
+diffusers>=0.25.0
+transformers>=4.35.0
+safetensors>=0.4.0
+
+# CLIP
+open-clip-torch>=2.24.0
+openai-clip>=1.0.0
+
+# Configuration and utilities
+omegaconf>=2.3.0
+einops>=0.7.0
+numpy>=1.24.0
+
+# Training utilities
+tensorboard>=2.15.0
+tqdm>=4.65.0
+pytorch-lightning>=2.0.0
+
+# Streamlit for demos (optional)
+streamlit>=1.31.0

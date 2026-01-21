@@ -66,6 +66,41 @@ As a demo, we provide two example videos (`'sky'` and `'uvg'`) in the `'data'` f
 
 You can also use your own videos, as long as they are organized in the same format as the example above.
 ### (3) Training
+
+#### End-to-End Training with MappingNet
+
+For training the complete video prediction reconstruction compression model with learned MappingNet:
+
+```bash
+$ python train.py --frame_dir "data/sky" --rank 8 --interval 1 --num_epochs 100 --batch_size 4
+```
+
+**Key Arguments:**
+- `--frame_dir`: Directory containing video frames (00000.png, 00001.png, ...)
+- `--rank`: Rank for low-rank decomposition (controls bitrate, default: 8)
+- `--interval`: Interval between reference and target frames (default: 1)
+- `--diffusion_steps`: Number of diffusion steps 1-4 (default: 1)
+- `--lr`: Learning rate (default: 1e-4)
+- `--eval_interval`: Evaluate LPIPS/PSNR every N iterations (default: 100)
+
+**Model Architecture:**
+- **Image Encoder**: CLIP ViT-L/14 backbone (frozen) - encodes images A, B to features F_a, F_b
+- **MappingNet**:
+  - **ConditionFusionNet**: Fuses F_a and F_b with gated mechanism → outputs U (77×r), V (r×1024)
+  - **NullTextNet**: Processes F_a → outputs null-text embedding (77×1024)
+- **SD-Turbo**: 1-4 step diffusion for reconstruction
+
+**Training Supervision:**
+- MSE loss in VAE latent space
+- L1/L2 regularization on condition matrices
+- Every 100 iterations: decode and compute LPIPS and PSNR metrics
+
+Training logs are saved to `logs/`, checkpoints to `checkpoints_train/`, and sample images to `samples/`.
+
+#### Original Inversion Training
+
+For the original per-video optimization approach:
+
 ```bash
 $ python inversion.py -frame_path "data/sky" -max_id 140 -rank 8 -interval 10
 ```
