@@ -115,7 +115,7 @@ class VideoFramePairDataset(Dataset):
         idx_a = idx
         
         # Frame B (target) - with possible random offset
-        if self.random_offset and self.training:
+        if self.random_offset:
             offset = np.random.randint(1, self.interval + 1)
         else:
             offset = self.interval

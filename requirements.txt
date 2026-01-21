@@ -22,7 +22,6 @@ safetensors>=0.4.0
 
 # CLIP
 open-clip-torch>=2.24.0
-openai-clip>=1.0.0
 
 # Configuration and utilities
 omegaconf>=2.3.0

@@ -33,11 +33,18 @@ import cv2
 from diffusers import AutoencoderTiny
 from omegaconf import OmegaConf
 
-from scripts.demo.streamlit_helpers import init_st, load_model
+# Try to import streamlit helpers - may not be available in all environments
+try:
+    from scripts.demo.streamlit_helpers import init_st, load_model
+    STREAMLIT_AVAILABLE = True
+except ImportError:
+    STREAMLIT_AVAILABLE = False
+    init_st = None
+    load_model = None
+    print("Warning: streamlit_helpers not available. SD-Turbo loading may be limited.")
 from sgm.modules.diffusionmodules.sampling import EulerAncestralSampler
 from models import VideoCompressionModel
 from dataset import VideoFramePairDataset, create_dataloader
-from quantization import QParam, FakeQuantize
 
 
 # ============================================================================
@@ -81,10 +88,10 @@ class SubstepSampler(EulerAncestralSampler):
         return x, s_in, sigmas, num_sigmas, cond, uc
 
 
-def seeded_randn(shape, seed):
+def seeded_randn(shape, seed, device="cuda"):
     """Generate reproducible random noise."""
     randn = np.random.RandomState(seed).randn(*shape)
-    randn = torch.from_numpy(randn).to(device="cuda", dtype=torch.float32)
+    randn = torch.from_numpy(randn).to(device=device, dtype=torch.float32)
     return randn
 
 
@@ -316,7 +323,18 @@ class Trainer:
         # Check if checkpoint exists
         if not os.path.exists(version_dict["ckpt"]):
             print(f"Warning: SD-Turbo checkpoint not found at {version_dict['ckpt']}")
-            print("Please download the model checkpoint first.")
+            print("Please download the SD-Turbo model:")
+            print("  1. Visit https://huggingface.co/stabilityai/sd-turbo")
+            print("  2. Download 'sd_turbo.safetensors'")
+            print(f"  3. Place it in the '{os.path.dirname(version_dict['ckpt'])}' folder")
+            self.sd_model = None
+            self.sampler = None
+            self.decoder = None
+            return
+        
+        # Check if streamlit helpers are available
+        if not STREAMLIT_AVAILABLE:
+            print("Warning: streamlit_helpers not available. Cannot load SD-Turbo.")
             self.sd_model = None
             self.sampler = None
             self.decoder = None

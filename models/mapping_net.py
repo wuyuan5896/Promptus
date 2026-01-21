@@ -145,6 +145,8 @@ class ConditionFusionNet(nn.Module):
         self.seq_len = seq_len
         self.embed_dim = embed_dim
         self.rank = rank
+        # Cache sqrt(rank) for efficiency
+        self.rank_sqrt = rank ** 0.5
         
         # Gated fusion module
         self.gated_fusion = GatedFusionModule(feature_dim, hidden_dim)
@@ -220,7 +222,7 @@ class ConditionFusionNet(nn.Module):
         
         # Compute full condition matrix via matrix multiplication
         # Scale by sqrt(rank) for stable training (similar to attention scaling)
-        condition = torch.bmm(U, V) / (self.rank ** 0.5)  # (batch, 77, 1024)
+        condition = torch.bmm(U, V) / self.rank_sqrt  # (batch, 77, 1024)
         
         return U, V, condition
 

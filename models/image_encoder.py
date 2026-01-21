@@ -9,6 +9,11 @@ import torch.nn as nn
 import open_clip
 import kornia
 
+# CLIP normalization constants (ImageNet statistics used by OpenAI CLIP)
+# These values are standard for CLIP models pretrained on ImageNet
+CLIP_MEAN = [0.48145466, 0.4578275, 0.40821073]
+CLIP_STD = [0.26862954, 0.26130258, 0.27577711]
+
 
 class CLIPImageEncoder(nn.Module):
     """
@@ -72,15 +77,15 @@ class CLIPImageEncoder(nn.Module):
             # Default for ViT-L-14
             self.feature_dim = 1024
         
-        # Register normalization buffers
+        # Register CLIP normalization buffers (ImageNet statistics)
         self.register_buffer(
             "mean", 
-            torch.Tensor([0.48145466, 0.4578275, 0.40821073]), 
+            torch.Tensor(CLIP_MEAN), 
             persistent=False
         )
         self.register_buffer(
             "std", 
-            torch.Tensor([0.26862954, 0.26130258, 0.27577711]), 
+            torch.Tensor(CLIP_STD), 
             persistent=False
         )
         
